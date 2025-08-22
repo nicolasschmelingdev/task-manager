@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./task-manager-backend
+      dockerfile: Dockerfile
+    container_name: task-manager-app
+    restart: unless-stopped
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:oracle:thin:@//oracle:1521/XEPDB1
+      DB_USERNAME: TM_APP
+      DB_PASSWORD: tm_app_password
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: TM_APP
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000
+      JWT_SECRET: change-this-dev-secret-please
+      JWT_EXPIRATION_MILLIS: 86400000
+    ports:
+      - "8081:8081"
+    networks:
+      - app-net
+
+  oracle:
+    image: gvenzl/oracle-free
+    container_name: oracle-xe
+    restart: unless-stopped
+    environment:
+      ORACLE_PASSWORD: "oracle_password"
+      ORACLE_DATABASE: "XEPDB1"
+      ORACLE_CHARACTERSET: "AL32UTF8"
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./task-manager-backend/docker/oracle/init:/container-entrypoint-initdb.d:ro
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  frontend:
+    image: node:20-alpine
+    container_name: task-manager-frontend
+    working_dir: /app
+    # Mount the frontend source for live development
+    volumes:
+      - ./task-manager-frontend:/app
+      - /app/node_modules
+    environment:
+      # Improve file watching reliability in containers
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "npm ci && npm start -- --host 0.0.0.0 --port 4200"
+    ports:
+      - "4200:4200"
+    networks:
+      - app-net
+    depends_on:
+      - backend
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      JAVA_OPTS: "-Djava.util.logging.config.file=/var/jenkins_home/log.properties"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+    networks:
+      - app-net
+
+volumes:
+  oracle-data:
+  jenkins-home:
+
+networks:
+  app-net:
+    driver: bridge
