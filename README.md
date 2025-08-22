@@ -21,8 +21,8 @@ Clone os repositórios do frontend e do backend diretamente dentro desta pasta r
 
 ```bash
 # Dentro da pasta task-manager/
-git clone https://github.com/nicolasschmelingdev/task-manager-frontend task-manager-frontend
-git clone https://github.com/nicolasschmelingdev/task-manager-backend task-manager-backend
+git clone https://github.com/nicolasschmelingdev/task-manager-frontend.git task-manager-frontend
+git clone https://github.com/nicolasschmelingdev/task-manager-backend.git task-manager-backend
 ```
 
 Você também pode usar as URLs via SSH, se preferir. Após o clone, a estrutura deverá corresponder ao que é mostrado acima para que os comandos de build e o `docker-compose.yml` funcionem corretamente.
