@@ -38,6 +38,10 @@ URLs de acesso:
 - Jenkins: http://localhost:8080
 - Oracle XE: localhost:1521 (service `XEPDB1`)
 
+### Credenciais de teste (ambiente de desenvolvimento)
+- __Usuário__: `teste`
+- __Senha__: `12345`
+
 Parar/remover serviços:
 ```bash
 docker compose down
