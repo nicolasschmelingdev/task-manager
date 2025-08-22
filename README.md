@@ -8,6 +8,25 @@ Aplicação web para gerenciamento de tarefas. Atende aos requisitos do teste pr
 - __Banco__: Oracle XE (imagem `gvenzl/oracle-free`).
 - __DevOps__: Docker Compose para orquestração e Jenkins para CI com `Jenkinsfile` na raiz.
 
+## Preparação do Repositório (clonar subprojetos)
+Este repositório raiz é `task-manager` e espera os subprojetos clonados dentro dele, nas pastas exatamente nomeadas abaixo:
+
+```
+task-manager/
+  ├─ task-manager-backend/
+  └─ task-manager-frontend/
+```
+
+Clone os repositórios do frontend e do backend diretamente dentro desta pasta raiz:
+
+```bash
+# Dentro da pasta task-manager/
+git clone https://github.com/nicolasschmelingdev/task-manager-frontend task-manager-frontend
+git clone https://github.com/nicolasschmelingdev/task-manager-backend task-manager-backend
+```
+
+Você também pode usar as URLs via SSH, se preferir. Após o clone, a estrutura deverá corresponder ao que é mostrado acima para que os comandos de build e o `docker-compose.yml` funcionem corretamente.
+
 ## Como executar (Docker Compose)
 Pré-requisitos: Docker e Docker Compose. Na raiz do repositório:
 ```bash
